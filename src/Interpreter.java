@@ -13,12 +13,14 @@ public class Interpreter {
     public static List<List<Token>> lexer(String contents) {
         String[] lines = contents.split("\n");
         List<List<Token>> nLines = new ArrayList<>();
+
         for (String line : lines) {
             char[] chars = line.toCharArray();
             StringBuilder tempStr = new StringBuilder();
             List<Token> tokens = new ArrayList<>();
             int quoteCount = 0;
             boolean inQuotes = false;
+
             for (char c : chars) {
                 if (c == '"' || c == '\'') {
                     quoteCount++;
@@ -31,6 +33,7 @@ public class Interpreter {
                     tempStr.append(c);
                 }
             }
+
             tokens.add(new Token(tempStr.toString()));
             nLines.add(tokens);
         }
@@ -66,13 +69,13 @@ public class Interpreter {
 
         private void determineType() {
             if (value.matches("[\"'].*[\"']")) {
-                this.type = "string";
+                this.type = "String";
             } else if (Pattern.matches("[.a-zA-Z]+", value)) {
-                this.type = "symbol";
+                this.type = "Symbol";
             } else if ("+-*/=".contains(value)) {
-                this.type = "expression";
+                this.type = "Expression";
             } else if (Pattern.matches("[.0-9]+", value)) {
-                this.type = "number";
+                this.type = "Number";
             }
         }
 
