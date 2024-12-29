@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
+
 public class Main {
     public static void main(String[] args) {
         String filePath = "C:\\Users\\user\\Desktop\\FOP\\python_code_test.txt";
@@ -39,6 +40,8 @@ public class Main {
         } catch (Exception e) {
             System.err.println("Error writing Java file: " + e.getMessage());
         }
+
+        Execution.eval(tokens);
     }
 
 

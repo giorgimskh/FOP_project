@@ -13,6 +13,7 @@ public class Interpreter {
     public static List<List<Token>> lexer(String contents) {
         String[] lines = contents.split("\n");
         List<List<Token>> nLines = new ArrayList<>();
+
         for (String line : lines) {
             char[] chars = line.toCharArray();
             List<Token> tokens = new ArrayList<>();
