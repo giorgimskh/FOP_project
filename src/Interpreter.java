@@ -77,6 +77,14 @@ public class Interpreter {
             } else if (Pattern.matches("[.0-9]+", value)) {
                 this.type = "Number";
             }
+            else if("print".equals(value)){
+                this.type="print";
+            }
+            else if ("(".equals(value)) {
+                this.type = "LeftParenthesis";
+            } else if (")".equals(value)) {
+                this.type = "RightParenthesis";
+            }
         }
 
         @Override
