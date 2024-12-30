@@ -40,10 +40,14 @@ public class Interpreter {
             if (tempStr.length() > 0) {
                 tokens.add(new Token(tempStr.toString()));
             }
-            nLines.add(tokens);
+            // Only add the list of tokens if it's not empty
+            if (!tokens.isEmpty()) {
+                nLines.add(tokens);
+            }
         }
         return nLines;
     }
+
 
     public static List<List<Token>> parse(String file) {
         List<List<Token>> lines = new ArrayList<>();
