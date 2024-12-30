@@ -82,6 +82,14 @@ public class Interpreter {
             } else {
                 type = "unknown";
             }
+            else if("print".equals(value)){
+                this.type="print";
+            }
+            else if ("(".equals(value)) {
+                this.type = "LeftParenthesis";
+            } else if (")".equals(value)) {
+                this.type = "RightParenthesis";
+            }
         }
 
         @Override
