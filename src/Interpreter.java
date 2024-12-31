@@ -2,94 +2,83 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class Interpreter {
-    static HashMap<String, String> Vars = new HashMap<>();
-    static String[] Symbols = {"var", "function", "print"};
-
-    public static List<List<Token>> lexer(String contents) {
-        String[] lines = contents.split("\n");
-        List<List<Token>> nLines = new ArrayList<>();
-        for (String line : lines) {
-            char[] chars = line.toCharArray();
-            List<Token> tokens = new ArrayList<>();
-            StringBuilder tempStr = new StringBuilder();
-            boolean inQuotes = false;
-            int quoteCount = 0;
-
-            for (char c : chars) {
-                if (c == '"' || c == '\'') {
-                    quoteCount++;
-                    inQuotes = quoteCount % 2 != 0;
-                }
-                if (!inQuotes && (c == ' ' || "(),:{}[]".indexOf(c) >= 0)) {
-                    if (tempStr.length() > 0) {
-                        tokens.add(new Token(tempStr.toString()));
-                        tempStr.setLength(0);
-                    }
-                    if (c != ' ') {
-                        tokens.add(new Token(String.valueOf(c)));
-                    }
-                } else {
-                    tempStr.append(c);
-                }
-            }
-            if (tempStr.length() > 0) {
-                tokens.add(new Token(tempStr.toString()));
-            }
-            // Only add the list of tokens if it's not empty
-            if (!tokens.isEmpty()) {
-                nLines.add(tokens);
-            }
-        }
-        return nLines;
-    }
-
-
-    public static List<List<Token>> parse(String file) {
+    public static List<List<Token>> parse(String filePath) {
         List<List<Token>> lines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder content = new StringBuilder();
             String line;
-            StringBuilder contents = new StringBuilder();
             while ((line = reader.readLine()) != null) {
-                contents.append(line).append("\n");
+                content.append(line).append("\n");
             }
-            return lexer(contents.toString());
+            return lexer(content.toString());
         } catch (IOException e) {
             e.printStackTrace();
-            return lines; // In case of IOException, return an empty list of tokens.
+            return lines;
         }
+    }
+
+    public static List<List<Token>> lexer(String text) {
+        String[] rawLines = text.split("\n");
+        List<List<Token>> tokenLines = new ArrayList<>();
+        for (String l : rawLines) {
+            int indent = 0;
+            while (indent < l.length() && (l.charAt(indent) == ' ' || l.charAt(indent) == '\t')) {
+                indent++;
+            }
+            String trimmed = l.substring(indent);
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+            List<Token> lineTokens = new ArrayList<>();
+            char[] arr = trimmed.toCharArray();
+            StringBuilder temp = new StringBuilder();
+            boolean inQuotes = false;
+            int quoteCount = 0;
+            for (char c : arr) {
+                if (c == '"' || c == '\'') {
+                    quoteCount++;
+                    inQuotes = (quoteCount % 2 != 0);
+                }
+                if (!inQuotes && (c == ' ' || "(),:{}[]".indexOf(c) >= 0)) {
+                    if (temp.length() > 0) {
+                        lineTokens.add(new Token(temp.toString(), indent));
+                        temp.setLength(0);
+                    }
+                    if (c != ' ') {
+                        lineTokens.add(new Token(String.valueOf(c), indent));
+                    }
+                } else {
+                    temp.append(c);
+                }
+            }
+            if (temp.length() > 0) {
+                lineTokens.add(new Token(temp.toString(), indent));
+            }
+            if (!lineTokens.isEmpty()) {
+                tokenLines.add(lineTokens);
+            }
+        }
+        return tokenLines;
     }
 
     public static class Token {
-        String type;
-        String value;
-
-        public Token(String value) {
-            this.value = value;
+        public String value;
+        public int indentLevel;
+        public Token(String v, int indent) {
+            value = v;
+            indentLevel = indent;
             determineType();
         }
-
         private void determineType() {
-            if (value.matches("[\"'].*[\"']")) {
-                type = "string";
+            if (Pattern.matches("[\"'].*[\"']", value)) {
             } else if (Pattern.matches("[.a-zA-Z]+", value)) {
-                type = "symbol";
-            } else if ("+-*/=,{}()[]:".contains(value)) {
-                type = "operator";
+            } else if ("+-*/=,{}()[]:%".contains(value)) {
             } else if (Pattern.matches("[.0-9]+", value)) {
-                type = "number";
-            } else {
-                type = "unknown";
             }
-        }
-
-        @Override
-        public String toString() {
-            return type + ": " + value;
         }
     }
 }

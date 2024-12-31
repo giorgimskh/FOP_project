@@ -9,20 +9,24 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        // Adjust the file path to your Python script
         String filePath = "C:\\Users\\user\\Desktop\\FOP\\python_code_test.txt";
+
+        // 1) Parse the Python file into tokens
         List<List<Interpreter.Token>> tokens = Interpreter.parse(filePath);
 
+        // 2) Convert tokens to Java code
         PythonToJavaConverter converter = new PythonToJavaConverter(tokens);
         String javaCode = converter.convert();
 
-        // Print the converted Java code (Optional)
+        // (Optional) Print the generated Java code
         System.out.println(javaCode);
 
-        // Save the generated Java code to a file
-        String className = "TranslatedJavaCode"; // Name of the Java class to be created
+        // 3) Save the generated Java code to a file
+        String className = "TranslatedJavaCode";
         saveJavaCode(className, javaCode);
 
-        // Compile and execute the Java file
+        // 4) Compile and run the Java code
         compileAndRunJava(className);
     }
 
@@ -30,25 +34,24 @@ public class Main {
         try {
             String fileName = className + ".java";
             FileWriter writer = new FileWriter(fileName);
+            // Write a top-level public class with a main() that holds the code
             writer.write("public class " + className + " {\n");
             writer.write("    public static void main(String[] args) {\n");
             writer.write(javaCode);
-            writer.write("    }\n");  // End of main method
-            writer.write("}\n");      // End of class
+            writer.write("    }\n");
+            writer.write("}\n");
             writer.close();
         } catch (Exception e) {
             System.err.println("Error writing Java file: " + e.getMessage());
         }
     }
 
-
     private static void compileAndRunJava(String className) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
-            System.err.println("No Java compiler available. Make sure you are running this with a JDK and not just a JRE.");
+            System.err.println("No Java compiler found. Make sure you're running with a JDK, not just a JRE.");
             return;
         }
-
         int result = compiler.run(null, null, null, className + ".java");
         if (result == 0) {
             try {
@@ -56,10 +59,9 @@ public class Main {
                 URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{root.toURI().toURL()});
                 Class<?> cls = Class.forName(className, true, classLoader);
                 Method main = cls.getDeclaredMethod("main", String[].class);
-                String[] args = null; // main method args, if needed
-                main.invoke(null, (Object) args);
+                main.invoke(null, (Object) new String[]{});
             } catch (Exception e) {
-                System.err.println("Error running class " + className + ": " + e.getMessage());
+                System.err.println("Error running compiled class: " + e.getMessage());
             }
         } else {
             System.err.println("Compilation failed.");

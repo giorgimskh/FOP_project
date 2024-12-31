@@ -1,16 +1,18 @@
 public class TranslatedJavaCode {
     public static void main(String[] args) {
-N=10
-M=11
-sum=0
-for (int number = 1; number < M; number++) {
-	sum=sum+number
-	print(" Sum of first ",N," numbers: ",sum)
-	A=5
-	factorial=1
-for (int i = 1; i < A; i++) {
-	factorial=factorial*i
-	print(" Factorial of ",A," : ",factorial)
+int N = 13;
+boolean is_prime = true;
+if (N<3) {
+is_prime = false;
+} else if (N%2==0) {
+is_prime = false;
+} else {
+i = 2;
+for (; i < N/2; i++) {
+if (N%i==0) {
+is_prime = false;
+break;
 }
+System.out.println("Is" + N + "a prime number:" + is_prime);
     }
 }
