@@ -16,31 +16,25 @@ public class Interpreter {
 
         for (String line : lines) {
             char[] chars = line.toCharArray();
-            List<Token> tokens = new ArrayList<>();
             StringBuilder tempStr = new StringBuilder();
-            boolean inQuotes = false;
+            List<Token> tokens = new ArrayList<>();
             int quoteCount = 0;
+            boolean inQuotes = false;
 
             for (char c : chars) {
                 if (c == '"' || c == '\'') {
                     quoteCount++;
                     inQuotes = quoteCount % 2 != 0;
                 }
-                if (!inQuotes && (c == ' ' || "(),:{}[]".indexOf(c) >= 0)) {
-                    if (tempStr.length() > 0) {
-                        tokens.add(new Token(tempStr.toString()));
-                        tempStr.setLength(0);
-                    }
-                    if (c != ' ') {
-                        tokens.add(new Token(String.valueOf(c)));
-                    }
+                if (c == ' ' && !inQuotes) {
+                    tokens.add(new Token(tempStr.toString()));
+                    tempStr = new StringBuilder();
                 } else {
                     tempStr.append(c);
                 }
             }
-            if (tempStr.length() > 0) {
-                tokens.add(new Token(tempStr.toString()));
-            }
+
+            tokens.add(new Token(tempStr.toString()));
             nLines.add(tokens);
         }
         return nLines;
@@ -48,39 +42,40 @@ public class Interpreter {
 
     public static List<List<Token>> parse(String file) {
         List<List<Token>> lines = new ArrayList<>();
+        StringBuilder contents = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            StringBuilder contents = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 contents.append(line).append("\n");
             }
-            return lexer(contents.toString());
         } catch (IOException e) {
             e.printStackTrace();
-            return lines; // In case of IOException, return an empty list of tokens.
         }
+        return lexer(contents.toString());
+    }
+
+    public static void exec(String instLine) {
+        // Placeholder for exec implementation
     }
 
     public static class Token {
         String type;
         String value;
 
-        public Token(String value) {
+        Token(String value) {
             this.value = value;
             determineType();
         }
 
         private void determineType() {
             if (value.matches("[\"'].*[\"']")) {
-                type = "string";
+                this.type = "String";
             } else if (Pattern.matches("[.a-zA-Z]+", value)) {
-                type = "symbol";
-            } else if ("+-*/=,{}()[]:".contains(value)) {
-                type = "operator";
+                this.type = "Symbol";
+            } else if ("+-*/=".contains(value)) {
+                this.type = "Expression";
             } else if (Pattern.matches("[.0-9]+", value)) {
-                type = "number";
-            } else {
-                type = "unknown";
+                this.type = "Number";
             }
             else if("print".equals(value)){
                 this.type="print";
@@ -97,4 +92,5 @@ public class Interpreter {
             return type + ": " + value;
         }
     }
+
 }
