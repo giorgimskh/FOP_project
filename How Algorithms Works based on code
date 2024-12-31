@@ -1,0 +1,110 @@
+N = 10
+M = 11
+sum = 0
+for number in range ( 1 , M ) :
+    sum = sum + number
+print ( " Sum of first " , N , " numbers: " , sum )
+
+A = 5
+AA = 6
+factorial = 1
+for i in range ( 1 , AA ) :
+    factorial = factorial * i
+print ( " Factorial of " , A , " : " , factorial )
+
+a = 48
+b = 18
+while b:
+    tempA = a
+    a = b
+    b = tempA % b
+gcd = a
+print("GCD of 48 and 18:", gcd)
+
+number = 1234
+reversed_number = 0
+
+while number != 0:
+    digit = number % 10
+    reversed_number = reversed_number * 10 + digit
+    number = (number - digit) / 10
+
+print("Reversed number of 1234:", int(reversed_number))
+
+N = 13
+is_prime = True
+
+if N < 3:
+    is_prime = False
+elif N % 2 == 0:
+    is_prime = False
+else:
+    i = 2
+    while i < int(N / 2):
+        if N % i == 0:
+            is_prime = False
+            break
+        i = i + 1
+
+print("Is ", N, " a prime number: ", is_prime)
+
+
+numberP = 121
+original_number = numberP
+reversed_number_2 = 0
+is_palindrome = false
+
+while numberP != 0:
+    digit_2 = numberP % 10
+    reversed_number_2 = reversed_number_2 * 10 + digit_2
+    numberP = (numberP - digit_2) / 10
+
+if original_number == int(reversed_number_2):
+    is_palindrome = True
+
+print("Is", original_number, "a palindrome:", is_palindrome)
+
+
+
+
+n = 3947
+largest_digit = 0
+tempMaxDigit = 0
+
+
+while n > 0:
+    tempMaxDigit = n % 10
+    if tempMaxDigit > largest_digit:
+        largest_digit = tempMaxDigit
+    n = (n - tempMaxDigit) / 10
+
+print("Largest digit in 3947: ", int(largest_digit))
+
+
+sum_of_digits = 0
+tempSumDigit = 0
+number1 = 1234
+
+while number1 > 0:
+    tempSumDigit = number1 % 10
+    sum_of_digits = sum_of_digits + tempSumDigit
+    number1 = (number1 - tempSumDigit) / 10
+
+print("Sum of digits of 1234:", int(sum_of_digits))
+
+
+number = 5
+for j in range(1, 11):
+    print(number, "x", j, "=", number * j)
+
+
+N = 10
+a = 0
+b = 1
+
+for k in range(2, N + 1):
+    temp = b
+    b = a + b
+    a = temp
+
+print("The ", N, " th Fibonacci number is: ", b)
